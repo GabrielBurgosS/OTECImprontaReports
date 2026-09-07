@@ -1,0 +1,26 @@
+# Ignore credentials
+.env
+credentials.json
+
+# Ignore all generated/downloaded reports and client data (real personal data)
+*.xlsx
+*.csv
+download_temp/
+salida/
+
+# Test / scratch notebooks (may contain real data in cell outputs)
+*.ipynb
+
+# Ignoring pycache
+*/__pycache__/*
+__pycache__
+
+# Ignore setup info
+OTECImprontaReports.egg-info
+
+# Virtual environment
+.venv/
+
+# IDE
+.vscode/
+*.code-workspace
