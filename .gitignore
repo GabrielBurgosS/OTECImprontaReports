@@ -24,3 +24,11 @@ OTECImprontaReports.egg-info
 # IDE
 .vscode/
 *.code-workspace
+# Bundled report templates (empty, no participant data) and anonymized test fixtures
+!assets/plantillas/*.xlsx
+!tests/fixtures/*.csv
+
+# Build output
+build/
+dist/
+installer/Output/
