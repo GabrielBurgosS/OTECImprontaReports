@@ -11,7 +11,17 @@ def single_report(type: Literal['participation', 'grades'], csv_path: str) -> pd
     return df
 
 def final_report(df_part: pd.DataFrame, df_grades: pd.DataFrame) -> pd.DataFrame:
-    df = pd.merge(df_part,df_grades, on=['Nombre','Dirección de correo'])
+    # Email is the reliable key: names may be formatted differently in each report
+    df = pd.merge(df_part, df_grades, on='Dirección de correo', how='outer',
+                  suffixes=('', '_grades'), indicator=True)
+    unmatched = df[df['_merge'] != 'both']
+    if not unmatched.empty:
+        print(f'Warning: {len(unmatched)} participant(s) found in only one report:')
+        for _, row in unmatched.iterrows():
+            source = 'participation' if row['_merge'] == 'left_only' else 'grades'
+            print(f'    - {row["Dirección de correo"]} (only in {source})')
+    df['Nombre'] = df['Nombre'].fillna(df['Nombre_grades'])
+    df = df.drop(columns=['Nombre_grades', '_merge'])
     df['Nombre'] = df['Nombre'].apply(lambda x: x.title())
     df = df.rename(columns={'Número de ID':'ID'})
     moves = ['ID','Nombre']
@@ -22,7 +32,6 @@ def final_report(df_part: pd.DataFrame, df_grades: pd.DataFrame) -> pd.DataFrame
 
 def weekly_report(df: pd.DataFrame) -> pd.DataFrame:
     df = df.sort_values(by='Nombre')
-    df = df.rename(columns={'Numero de ID':'ID'})
     df['% de Participación'] = df['% de Participación'].apply(lambda x: round(x,2))
     df['Nombre'] = df['Nombre'].apply(lambda x: x.title())
     return df

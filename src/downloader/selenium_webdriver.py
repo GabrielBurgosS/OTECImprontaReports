@@ -58,9 +58,9 @@ class WebDriverInstance:
 
     def close(self) -> None:
         """
-        Closes the WebDriver instance.
+        Closes the WebDriver instance, ending the browser and chromedriver processes.
         """
-        self.driver.close()
+        self.driver.quit()
 
 class WebDriver():
     def __init__(self, options:webdriver.ChromeOptions|None=None) -> None:

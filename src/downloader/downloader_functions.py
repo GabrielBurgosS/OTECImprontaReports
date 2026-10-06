@@ -1,11 +1,11 @@
-from concurrent.futures import wait
 import time
 
 from selenium.webdriver.common.by import By
 
 from src.downloader.selenium_webdriver import WebDriverInstance
 from src.read_config import get_credentials
-from src.downloader.exceptions import DownloaderError_FailedLogin
+from src.downloader.exceptions import DownloaderError_DownloadButtonNotFound, DownloaderError_FailedLogin
+from selenium.common.exceptions import TimeoutException, WebDriverException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -23,8 +23,6 @@ def wd_login(driver:WebDriverInstance):
     DownloaderError_FailedLogin: If the login attempt fails.
     """
     print('Trying to login...')
-    max_tries = 5
-    tries = 0
     try:
         driver.navigate('https://www.otecimpronta.cl/my/courses.php')
         # Log in credentials
@@ -32,12 +30,12 @@ def wd_login(driver:WebDriverInstance):
         driver.send_text_to_element(By.ID, "password", credentials['OTEC_PASSWORD'])
         # Log in click
         driver.click_element(By.ID, "loginbtn")
-        # driver.get_elements_list(By.PARTIAL_LINK_TEXT, 'Vista')
-    except:
+        # Moodle redirects away from /login/ only when the credentials are accepted
+        WebDriverWait(driver.driver, 10).until(lambda d: '/login/' not in d.current_url)
+    except (WebDriverException, TimeoutException) as e:
         print(' - Login failed')
-        raise ( DownloaderError_FailedLogin )
-    else:
-        print(' - Logged in\n')
+        raise DownloaderError_FailedLogin from e
+    print(' - Logged in\n')
 
 def wd_download_from_link(driver:WebDriverInstance, link:str, by:By, value_search:str):
     driver.navigate(link)
@@ -55,15 +53,15 @@ def wd_download_participation(driver:WebDriverInstance, id:int):
     for i in range(5):
         try:
             # Intentamos localizar el elemento
-            elemento = driver.click_element(By.LINK_TEXT, "Descargar en formato de hoja de cálculo (UTF-8.csv)")
+            driver.click_element(By.LINK_TEXT, button_text)
             return
-        except:
+        except WebDriverException:
             print("Elemento de descarga de participación no encontrado.")
         # 2. Si no se encuentra o no es visible, sube un poco
-        print(f"Desplazando {250}px hacia arriba...")
+        print("Desplazando 100px hacia arriba...")
         driver.driver.execute_script(f"window.scrollBy(0, -{100});")
         time.sleep(0.5) # Breve pausa para la animación del scroll
-    print("No se encontró el elemento tras los intentos especificados.")
+    raise DownloaderError_DownloadButtonNotFound(id)
 
 def wd_download_grades(driver:WebDriverInstance, id:int):
     link = f'https://www.otecimpronta.cl/grade/export/txt/index.php?id={id}'

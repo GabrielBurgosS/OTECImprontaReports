@@ -3,6 +3,7 @@ import time
 from typing import Literal
 import os
 
+from src.downloader.exceptions import DownloaderError_DownloadTimeout
 from src.other_functions.date_functions import get_cur_date_string
 from src.read_config import get_config
 
@@ -84,11 +85,15 @@ def auto_rename_last_download(type:Literal['part','grades'] , id:int):
     return 
 
 # Aditional Functions
-def wait_for_download(initial_count:int):
+def wait_for_download(initial_count:int, timeout:float=60):
     """
     Function to force the driver to wait until the download is ready.
+    Raises DownloaderError_DownloadTimeout if it takes longer than *timeout* seconds.
     """
+    deadline = time.monotonic() + timeout
     while count_csv_downloads() == initial_count:
+        if time.monotonic() > deadline:
+            raise DownloaderError_DownloadTimeout(timeout)
         time.sleep(0.5)
 
 if __name__ == '__main__':
