@@ -32,3 +32,6 @@ OTECImprontaReports.egg-info
 build/
 dist/
 installer/Output/
+
+# Local tool settings
+.claude/settings.local.json
