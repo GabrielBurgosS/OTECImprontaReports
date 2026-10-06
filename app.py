@@ -25,6 +25,10 @@ def already_running() -> bool:
 
 def main() -> int:
     setup_logging(console=sys.stderr is not None)
+    if len(sys.argv) >= 2 and sys.argv[1] == '--self-test':
+        from pathlib import Path
+        from src.selftest import run
+        return run(Path(sys.argv[2]) if len(sys.argv) > 2 else Path.cwd() / 'autoprueba')
     if already_running():
         messagebox.showinfo('OTEC Impronta', 'El programa ya está abierto.')
         return 0

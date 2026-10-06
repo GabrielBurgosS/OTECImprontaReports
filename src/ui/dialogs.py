@@ -14,7 +14,7 @@ from src.paths import logs_dir
 from src.report_export.templates import ATTENDANCE, FORMULA, MANUAL, TemplateCatalog
 from src.settings import Settings
 from src.ui.bridge import UiBridge
-from src.ui.theme import FONT_SMALL, FONT_TITLE, MUTED, OK_COLOR, ERROR_COLOR, open_path
+from src.ui.theme import FONT_SMALL, FONT_TITLE, MUTED, OK_COLOR, OUTLINE, ERROR_COLOR, open_path
 
 logger = logging.getLogger(__name__)
 
@@ -109,8 +109,7 @@ class AccountDialog(ModalDialog):
         buttons = ctk.CTkFrame(self, fg_color='transparent')
         buttons.grid(row=7, column=0, padx=24, pady=(12, 20), sticky='ew')
         buttons.grid_columnconfigure(1, weight=1)
-        self.test_button = ctk.CTkButton(buttons, text='Probar conexión', fg_color='transparent',
-                                         border_width=1, command=self._test)
+        self.test_button = ctk.CTkButton(buttons, text='Probar conexión', **OUTLINE, command=self._test)
         self.test_button.grid(row=0, column=0)
         ctk.CTkButton(buttons, text='Guardar', width=110, command=self._save).grid(row=0, column=2)
         if settings.username:
@@ -207,7 +206,7 @@ class GradeMappingDialog(ModalDialog):
             self.menus[header] = menu
         buttons = ctk.CTkFrame(self, fg_color='transparent')
         buttons.grid(row=len(request.headers) + 2, column=0, columnspan=2, padx=24, pady=(14, 20), sticky='e')
-        ctk.CTkButton(buttons, text='Omitir este curso', fg_color='transparent', border_width=1,
+        ctk.CTkButton(buttons, text='Omitir este curso', **OUTLINE,
                       command=self.cancel).grid(row=0, column=0, padx=(0, 8))
         ctk.CTkButton(buttons, text='Continuar', command=self._accept).grid(row=0, column=1)
 
@@ -245,14 +244,14 @@ class SettingsDialog(ModalDialog):
         # Templates
         templates.grid_columnconfigure(0, weight=1)
         templates.grid_rowconfigure(0, weight=1)
-        self.template_list = ctk.CTkScrollableFrame(templates, height=330)
+        self.template_list = ctk.CTkScrollableFrame(templates, height=330, width=560)
         self.template_list.grid(row=0, column=0, sticky='nsew', padx=4, pady=(4, 8))
         self.template_list.grid_columnconfigure(0, weight=1)
         template_buttons = ctk.CTkFrame(templates, fg_color='transparent')
         template_buttons.grid(row=1, column=0, sticky='ew')
         ctk.CTkButton(template_buttons, text='+ Agregar plantilla', command=self._add_template).grid(
             row=0, column=0, padx=4)
-        ctk.CTkButton(template_buttons, text='Restaurar originales', fg_color='transparent', border_width=1,
+        ctk.CTkButton(template_buttons, text='Restaurar originales', **OUTLINE,
                       command=self._restore_templates).grid(row=0, column=1, padx=4)
         self._render_templates()
 
@@ -262,7 +261,7 @@ class SettingsDialog(ModalDialog):
                      justify='left').grid(row=0, column=0, padx=12, pady=(16, 12), sticky='w')
         ctk.CTkButton(support, text='Exportar diagnóstico', command=self._export).grid(
             row=1, column=0, padx=12, pady=4, sticky='w')
-        ctk.CTkButton(support, text='Abrir carpeta de registros', fg_color='transparent', border_width=1,
+        ctk.CTkButton(support, text='Abrir carpeta de registros', **OUTLINE,
                       command=lambda: open_path(logs_dir())).grid(row=2, column=0, padx=12, pady=4, sticky='w')
 
         ctk.CTkButton(self, text='Guardar y cerrar', command=self._save).grid(
@@ -273,7 +272,7 @@ class SettingsDialog(ModalDialog):
             child.destroy()
         for row, template in enumerate(self.catalog.templates):
             card = ctk.CTkFrame(self.template_list)
-            card.grid(row=row, column=0, sticky='ew', pady=4)
+            card.grid(row=row, column=0, sticky='ew', pady=4, padx=(0, 14))
             card.grid_columnconfigure(0, weight=1)
             ctk.CTkLabel(card, text=template.name, font=ctk.CTkFont(weight='bold')).grid(
                 row=0, column=0, padx=10, pady=(6, 0), sticky='w')
@@ -281,7 +280,7 @@ class SettingsDialog(ModalDialog):
                 detail = describe_layout(self.catalog.layout(template.id))
             except OTECError as e:
                 detail = f'⚠ {e.user_message}'
-            ctk.CTkLabel(card, text=detail, text_color=MUTED, font=FONT_SMALL, wraplength=440,
+            ctk.CTkLabel(card, text=detail, text_color=MUTED, font=FONT_SMALL, wraplength=380,
                          justify='left').grid(row=1, column=0, padx=10, pady=(0, 6), sticky='w')
             if template.is_plain and template.builtin:
                 continue
@@ -291,8 +290,7 @@ class SettingsDialog(ModalDialog):
                 ctk.CTkButton(actions, text='Abrir', width=60,
                               command=lambda t=template: open_path(t.path)).grid(row=0, column=0, padx=2)
             if not template.builtin:
-                ctk.CTkButton(actions, text='Eliminar', width=70, fg_color='transparent', border_width=1,
-                              text_color=ERROR_COLOR,
+                ctk.CTkButton(actions, text='Eliminar', width=70, **{**OUTLINE, 'text_color': ERROR_COLOR},
                               command=lambda t=template: self._remove_template(t.id)).grid(row=0, column=1, padx=2)
 
     def _add_template(self):

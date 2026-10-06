@@ -11,6 +11,9 @@ MUTED = ('gray40', 'gray65')
 OK_COLOR = ('#2E7D32', '#66BB6A')
 ERROR_COLOR = ('#C62828', '#EF5350')
 WARN_COLOR = ('#B26A00', '#FFB74D')
+TEXT_COLOR = ('gray10', 'gray90')
+# Secondary buttons: outlined, readable in both light and dark mode
+OUTLINE = dict(fg_color='transparent', border_width=1, text_color=TEXT_COLOR, hover_color=('gray85', 'gray25'))
 
 
 def apply_theme() -> None:

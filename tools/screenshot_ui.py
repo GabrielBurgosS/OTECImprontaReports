@@ -1,6 +1,6 @@
 """Render the main window and dialogs with sample data and save screenshots (dev only, needs Pillow).
 
-Usage: python tools/screenshot_ui.py <output folder>
+Usage: python tools/screenshot_ui.py <output folder> [light|dark]
 """
 import os
 import sys
@@ -24,7 +24,7 @@ OUT = Path(sys.argv[1] if len(sys.argv) > 1 else '.')
 OUT.mkdir(parents=True, exist_ok=True)
 
 setup_logging(console=False)
-settings = Settings(output_dir=str(Path.home() / 'Documents' / 'Reportes OTEC'), username='',
+settings = Settings(output_dir=r'C:\Users\usuario\Documents\Reportes OTEC', username='',
                     courses=[{'id': 17, 'template': 'final', 'attendance': 'zoom'},
                              {'id': 20, 'template': 'semanal', 'attendance': 'none'},
                              {'id': 18, 'template': 'part', 'attendance': 'presencial'}],
@@ -32,7 +32,14 @@ settings = Settings(output_dir=str(Path.home() / 'Documents' / 'Reportes OTEC'),
                                   '20': 'Diversidad, Inclusión y Perspectiva de Género',
                                   '18': 'Deberes, Derechos y Obligaciones de los Funcionarios(as)'})
 ui_app.credential_store.load = lambda username: None  # never read real credentials here
-window = ui_app.MainWindow(settings, TemplateCatalog())
+if len(sys.argv) > 2:
+    import customtkinter as ctk
+    mode = sys.argv[2]
+    original_theme = ui_app.apply_theme
+    ui_app.apply_theme = lambda: (original_theme(), ctk.set_appearance_mode(mode))
+catalog = TemplateCatalog()
+catalog.add(catalog.get('final').path, 'Final Hospital (ejemplo)')
+window = ui_app.MainWindow(settings, catalog)
 
 
 def grab(widget, name):

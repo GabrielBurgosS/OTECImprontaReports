@@ -19,7 +19,7 @@ from src.settings import Settings
 from src.ui.bridge import UiBridge
 from src.ui.course_list import CourseList
 from src.ui.dialogs import AccountDialog, GradeMappingDialog, SettingsDialog
-from src.ui.theme import (ERROR_COLOR, FONT_HEADER, FONT_SMALL, MUTED, OK_COLOR, WARN_COLOR, apply_theme,
+from src.ui.theme import (OUTLINE, ERROR_COLOR, FONT_HEADER, FONT_SMALL, MUTED, OK_COLOR, WARN_COLOR, apply_theme,
                           open_path, reveal_in_explorer)
 
 logger = logging.getLogger(__name__)
@@ -74,8 +74,7 @@ class MainWindow(ctk.CTk):
         header.grid_columnconfigure(0, weight=1)
         ctk.CTkLabel(header, text='Generador de Reportes', font=FONT_HEADER).grid(row=0, column=0, sticky='w')
         ctk.CTkLabel(header, text=f'OTEC Impronta · v{APP_VERSION}', text_color=MUTED).grid(row=1, column=0, sticky='w')
-        self.settings_button = ctk.CTkButton(header, text='⚙  Ajustes', width=110, fg_color='transparent',
-                                             border_width=1, text_color=('gray10', 'gray90'),
+        self.settings_button = ctk.CTkButton(header, text='⚙  Ajustes', width=110, **OUTLINE,
                                              command=self._open_settings)
         self.settings_button.grid(row=0, column=1, rowspan=2)
 
@@ -96,11 +95,11 @@ class MainWindow(ctk.CTk):
         ctk.CTkLabel(bar, text='Guardar en:', font=ctk.CTkFont(weight='bold')).grid(row=0, column=0, padx=(12, 6), pady=10)
         self.output_label = ctk.CTkLabel(bar, text=self.settings.output_dir, anchor='w')
         self.output_label.grid(row=0, column=1, sticky='w')
-        self.output_button = ctk.CTkButton(bar, text='Cambiar...', width=100, fg_color='transparent', border_width=1,
-                                           text_color=('gray10', 'gray90'), command=self._choose_output)
+        self.output_button = ctk.CTkButton(bar, text='Cambiar...', width=100, **OUTLINE,
+                                            command=self._choose_output)
         self.output_button.grid(row=0, column=2, padx=4)
-        ctk.CTkButton(bar, text='Abrir carpeta', width=110, fg_color='transparent', border_width=1,
-                      text_color=('gray10', 'gray90'), command=self._open_output).grid(row=0, column=3, padx=(4, 12))
+        ctk.CTkButton(bar, text='Abrir carpeta', width=110, **OUTLINE,
+                       command=self._open_output).grid(row=0, column=3, padx=(4, 12))
 
     def _build_actions(self):
         bar = ctk.CTkFrame(self, fg_color='transparent')
@@ -309,8 +308,8 @@ class MainWindow(ctk.CTk):
                 buttons.grid(row=row, column=2, padx=8, sticky='n')
                 ctk.CTkButton(buttons, text='Abrir Excel', width=96,
                               command=lambda p=result.output_path: open_path(p)).pack(side='left', padx=2)
-                ctk.CTkButton(buttons, text='Ver en carpeta', width=110, fg_color='transparent', border_width=1,
-                              text_color=('gray10', 'gray90'),
+                ctk.CTkButton(buttons, text='Ver en carpeta', width=110, **OUTLINE,
+                              
                               command=lambda p=result.output_path: reveal_in_explorer(p)).pack(side='left', padx=2)
             row += 1
 
