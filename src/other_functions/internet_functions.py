@@ -1,10 +1,11 @@
-import urllib3
+import requests
 
-def check_internet_conn():
-    return True # TODO: Check a useful function to do this
-    
-if __name__ == '__main__':
-    if check_internet_conn():
-        print('Sip')
-    else:
-        print('Nop')
+PLATFORM_URL = 'https://www.otecimpronta.cl'
+
+
+def check_internet_conn(url: str = PLATFORM_URL, timeout: float = 5) -> bool:
+    try:
+        requests.head(url, timeout=timeout)
+    except requests.RequestException:
+        return False
+    return True

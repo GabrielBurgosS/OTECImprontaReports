@@ -1,8 +1,11 @@
+import re
+
 import pandas as pd
 
 def clean_columns(df: pd.DataFrame) -> pd.DataFrame:
-    df.columns = df.columns.str.replace('Cuestionario:','')
-    df.columns = df.columns.str.replace('(Real)','R')
+    # 'Cuestionario:Prueba Final (Real)' -> 'Prueba Final'
+    df.columns = [re.sub(r'^[^:]+:', '', column).replace('(Real)', '').strip() if '(Real)' in column else column
+                  for column in df.columns]
     return df
 
 def grades_process(df_grades: pd.DataFrame) -> pd.DataFrame:

@@ -1,8 +1,12 @@
-import pandas as pd
+import logging
 from typing import Literal
+
+import pandas as pd
 
 from src.data_process.grades_process import grades_process
 from src.data_process.participation_process import participation_process
+
+logger = logging.getLogger(__name__)
 
 def single_report(type: Literal['participation', 'grades'], csv_path: str) -> pd.DataFrame:
     df = pd.read_csv(csv_path)
@@ -11,18 +15,27 @@ def single_report(type: Literal['participation', 'grades'], csv_path: str) -> pd
     return df
 
 def final_report(df_part: pd.DataFrame, df_grades: pd.DataFrame) -> pd.DataFrame:
-    df = pd.merge(df_part,df_grades, on=['Nombre','Dirección de correo'])
+    # Email is the reliable key: names may be formatted differently in each report
+    df = pd.merge(df_part, df_grades, on='Dirección de correo', how='outer',
+                  suffixes=('', '_grades'), indicator=True)
+    unmatched = []
+    for _, row in df[df['_merge'] != 'both'].iterrows():
+        source = 'participación' if row['_merge'] == 'left_only' else 'notas'
+        unmatched.append(f'{row["Dirección de correo"]} aparece solo en el reporte de {source}')
+        logger.warning('%s', unmatched[-1])
+    df['Nombre'] = df['Nombre'].fillna(df['Nombre_grades'])
+    df = df.drop(columns=['Nombre_grades', '_merge'])
     df['Nombre'] = df['Nombre'].apply(lambda x: x.title())
     df = df.rename(columns={'Número de ID':'ID'})
     moves = ['ID','Nombre']
     new_order = moves + [column for column in df.columns if column not in moves]
     df = df[new_order]
     df = df.sort_values(by='Nombre')
+    df.attrs['unmatched'] = unmatched
     return df
 
 def weekly_report(df: pd.DataFrame) -> pd.DataFrame:
     df = df.sort_values(by='Nombre')
-    df = df.rename(columns={'Numero de ID':'ID'})
     df['% de Participación'] = df['% de Participación'].apply(lambda x: round(x,2))
     df['Nombre'] = df['Nombre'].apply(lambda x: x.title())
     return df
@@ -37,17 +50,3 @@ def auto_report_maker(course_dict: dict) -> pd.DataFrame:
         df_grades = single_report('grades', course_dict['downloads']['grades'])
         df = final_report(df_part, df_grades)
     return df
-    
-if __name__ == "__main__":
-    course_dict = {
-        'info':{	
-            'id': 109,
-            'type': 'weekly'
-        },
-        'downloads':{
-            'participation': r'download_temp\part ID109 07-04 (003620).csv',
-            'grades': None
-        }
-    }
-    print(auto_report_maker(course_dict))
-    

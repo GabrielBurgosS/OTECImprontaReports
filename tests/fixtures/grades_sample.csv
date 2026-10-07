@@ -1,0 +1,6 @@
+Nombre,Apellido(s),"Número de ID",Institución,Departamento,"Dirección de correo","Cuestionario:Prueba de Auto Diagnóstico (Real)","Cuestionario:Prueba Final (Real)","Total del curso (Real)","Última descarga de este curso"
+ANA,"PÉREZ SOTO",11111111-1,,,ana.perez@example.com,100.00,100.00,100.00,1785196089
+BRUNO,"DÍAZ LARA",22222222-2,,,bruno.diaz@example.com,60.00,-,30.00,1785196089
+CARLA,"ROJAS VEGA",33333333-3,,,carla.rojas@example.com,-,-,-,1785196089
+DIEGO,MUÑOZ,44444444-4,,,diego.munoz@example.com,50.00,45.00,47.50,1785196089
+EVA,"SOLO NOTAS",55555555-5,,,eva.solo@example.com,80.00,90.00,85.00,1785196089

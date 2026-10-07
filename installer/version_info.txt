@@ -1,0 +1,15 @@
+VSVersionInfo(
+  ffi=FixedFileInfo(filevers=(1, 0, 0, 0), prodvers=(1, 0, 0, 0), mask=0x3f, flags=0x0,
+                    OS=0x40004, fileType=0x1, subtype=0x0, date=(0, 0)),
+  kids=[
+    StringFileInfo([StringTable('040a04b0', [
+      StringStruct('CompanyName', 'OTEC Impronta'),
+      StringStruct('FileDescription', 'OTEC Impronta - Generador de Reportes'),
+      StringStruct('FileVersion', '1.0.0'),
+      StringStruct('InternalName', 'OTEC Reportes'),
+      StringStruct('OriginalFilename', 'OTEC Reportes.exe'),
+      StringStruct('ProductName', 'OTEC Impronta Reports'),
+      StringStruct('ProductVersion', '1.0.0')])]),
+    VarFileInfo([VarStruct('Translation', [0x040a, 1200])])
+  ]
+)
